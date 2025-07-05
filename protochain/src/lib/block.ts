@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto"
+import { createHash } from "node:crypto";
 
 /**
  * Block class
@@ -19,26 +19,26 @@ export default class Block {
    */
   constructor(index: number, previousHash: string, data: string) {
     this.index = index;
-    this.timestamp = Date.now()
-    this.previousHash = previousHash
-    this.data = data
+    this.timestamp = Date.now();
+    this.previousHash = previousHash;
+    this.data = data;
     this.hash = this.getHash();
   }
 
   getHash(): string {
-    const content = this.index + this.data + this.timestamp + this.previousHash
-    return createHash('sha256').update(content).digest('hex')
+    const content = this.index + this.data + this.timestamp + this.previousHash;
+    return createHash("sha256").update(content).digest("hex");
   }
 
   /**
    * Validates the block
    * @returns True if the block is valid, false otherwise
    */
-  isValid(): boolean {
-    if (this.index < 0) return false;
-    if (!this.hash) return false;
+  isValid(previousHash: string, previousIndex: number): boolean {
+    if (this.index < 0 || previousIndex != this.index - 1) return false;
+    if (!this.hash || this.hash !== this.getHash()) return false;
     if (!this.data) return false;
-    if (!this.previousHash) return false
+    if (this.previousHash !== previousHash) return false;
     if (this.timestamp < 1) return false;
     return true;
   }
