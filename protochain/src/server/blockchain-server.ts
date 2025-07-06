@@ -1,5 +1,6 @@
 import express from "express";
 import morgan from "morgan";
+import Block from "src/lib/block";
 import Blockchain from "src/lib/blockchain";
 
 const PORT = 3000;
@@ -33,6 +34,22 @@ app.get("/blocks/:indexOrHash", (req, res) => {
   }
 
   res.json(block);
+});
+
+app.post("/blocks", (req, res) => {
+  if (req.body.hash === undefined) {
+    res.status(422).json({ error: "Missing hash" });
+    return;
+  }
+
+  const block = new Block(req.body);
+  const validation = blockchain.addBlock(block);
+  if (validation.success) {
+    res.status(201).json(block);
+    return;
+  }
+
+  res.status(422).json(validation);
 });
 
 app.listen(PORT, () => console.log(`Blockchain server is running at ${PORT}`));
