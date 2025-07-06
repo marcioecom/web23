@@ -33,6 +33,11 @@ export default class Blockchain {
     return new Validation();
   }
 
+  getBlock(hash: string): Block | null {
+    const block = this.blocks.find((block) => block.hash === hash);
+    return block ? block : null;
+  }
+
   isValid(): Validation {
     for (let i = this.blocks.length - 1; i > 0; i--) {
       const currentBlock = this.blocks[i];

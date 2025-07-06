@@ -40,4 +40,16 @@ describe("Blockchain tests", () => {
     const result = blockchain.addBlock(block);
     expect(result.success).toEqual(false);
   });
+
+  test("Should get block", () => {
+    const blockchain = new Blockchain();
+    const block = blockchain.getBlock(blockchain.blocks[0].hash);
+    expect(block).toBeTruthy();
+  });
+
+  test("Should NOT get block", () => {
+    const blockchain = new Blockchain();
+    const block = blockchain.getBlock("123");
+    expect(block).toBeNull();
+  });
 });
