@@ -1,5 +1,5 @@
+import { Either, left, right } from "@/util/either";
 import { createHash } from "node:crypto";
-import Validation from "./validation";
 
 /**
  * Block class
@@ -32,15 +32,15 @@ export default class Block {
    * Validates the block
    * @returns True if the block is valid, false otherwise
    */
-  isValid(previousHash: string, previousIndex: number): Validation {
+  isValid(previousHash: string, previousIndex: number): Either<Error, true> {
     if (this.index < 0 || previousIndex != this.index - 1)
-      return new Validation(false, "Invalid index");
+      return left(new Error("Invalid index"));
     if (!this.hash || this.hash !== this.getHash())
-      return new Validation(false, "Invalid hash");
-    if (!this.data) return new Validation(false, "Invalid data");
+      return left(new Error("Invalid hash"));
+    if (!this.data) return left(new Error("Invalid data"));
     if (this.previousHash !== previousHash)
-      return new Validation(false, "Invalid previous hash");
-    if (this.timestamp < 1) return new Validation(false, "Invalid timestamp");
-    return new Validation();
+      return left(new Error("Invalid previous hash"));
+    if (this.timestamp < 1) return left(new Error("Invalid timestamp"));
+    return right(true);
   }
 }

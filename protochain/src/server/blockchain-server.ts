@@ -1,9 +1,9 @@
+import Block from "@/lib/block";
+import Blockchain from "@/lib/blockchain";
 import express from "express";
 import morgan from "morgan";
-import Block from "src/lib/block";
-import Blockchain from "src/lib/blockchain";
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
@@ -12,7 +12,7 @@ app.use(express.json());
 
 const blockchain = new Blockchain();
 
-app.get("/status", (req, res) => {
+app.get("/status", (_req, res) => {
   res.json({
     numberOfBlocks: blockchain.blocks.length,
     isValid: blockchain.isValid(),
@@ -44,12 +44,12 @@ app.post("/blocks", (req, res) => {
 
   const block = new Block(req.body);
   const validation = blockchain.addBlock(block);
-  if (validation.success) {
-    res.status(201).json(block);
+  if (validation.isLeft()) {
+    res.status(422).json({ error: validation.value });
     return;
   }
 
-  res.status(422).json(validation);
+  res.status(201).json(block);
 });
 
 app.listen(PORT, () => console.log(`Blockchain server is running at ${PORT}`));
